@@ -1,5 +1,6 @@
 package com.alejandro.auth_system.config;
 
+import com.alejandro.auth_system.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -17,29 +18,23 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
+    private final CustomUserDetailsService userDetailsService;
+
+    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
     }
 
-    @Bean
-    public UserDetailsService userDetailsService(){
-        UserDetails user = User
-                .withUsername("ale")
-                .password(passwordEncoder().encode("test"))
-                .roles("ADMIN")
-                .build();
 
-        return new InMemoryUserDetailsManager(user);
-    }
 
-    @Bean
+        @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.authorizeHttpRequests(
-                req -> req.anyRequest().authenticated()
+                req -> req
+                        .requestMatchers("/register/**").permitAll()
+                        .anyRequest().authenticated()
         ).formLogin(Customizer.withDefaults())
                 .logout(Customizer.withDefaults())
-                .userDetailsService(userDetailsService());
+                .userDetailsService(userDetailsService);
         return http.build();
     }
 }

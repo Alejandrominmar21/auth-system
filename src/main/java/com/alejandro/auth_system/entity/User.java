@@ -53,6 +53,8 @@ public class User implements UserDetails {
     )
     private boolean enabled;
 
+    @Column(name = "locked")
+    private boolean locked;
 
 
     @Override
@@ -98,6 +100,7 @@ public class User implements UserDetails {
         this.password = password;
         this.email = email;
         this.enabled = enabled;
+        this.locked = locked;
     }
 
     public Long getId() {
@@ -131,6 +134,11 @@ public class User implements UserDetails {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public boolean isLocked() {
+        return locked;
+    }
+
 
     public String getEmail() {
         return email;
